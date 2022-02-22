@@ -3,16 +3,19 @@ project(cake)
 
 enable_testing()
 
-include_directories(../include)
+include_directories(${CAKE_HOME}/include)
+
+find_package(OpenSSL REQUIRED)
 
 add_executable(
   test
   main.cpp
 )
-target_link_libraries(
-  test
+target_link_libraries(test
+  cake
   gtest
   gtest_main
+  OpenSSL::SSL
   pthread
 )
 
