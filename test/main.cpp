@@ -3,14 +3,14 @@
 #include <cake/BloomFilter.h>
 
 TEST(BloomFilterTest, emptyFilter) {
-    cake::BloomFilter bloomFilter(1024, 3); 
+    cake::BloomFilter bloomFilter(10000, 0.05);
 
     ASSERT_FALSE(bloomFilter.contains(9.3));
     ASSERT_FALSE(bloomFilter.contains(9));
 }
 
 TEST(BloomFilterTest, add) {
-    cake::BloomFilter bloomFilter(1024, 3); 
+    cake::BloomFilter bloomFilter(10000, 0.05);
 
     ASSERT_FALSE(bloomFilter.contains(7));
     bloomFilter.add(7);
@@ -19,7 +19,7 @@ TEST(BloomFilterTest, add) {
 }
 
 TEST(BloomFilterTest, clear) {
-    cake::BloomFilter bloomFilter(1024, 3); 
+    cake::BloomFilter bloomFilter(10000, 0.05);
 
     bloomFilter.add(7);
     bloomFilter.add("eight");
