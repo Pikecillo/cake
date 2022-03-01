@@ -14,6 +14,16 @@ target_link_libraries(test
     pthread
 )
 
+add_executable(test_trie
+    test_trie.cpp
+)
+target_link_libraries(test_trie
+    cake
+    gtest
+    gtest_main
+    pthread
+)
+
 include(GoogleTest)
 
 gtest_discover_tests(test)
