@@ -14,10 +14,10 @@ target_link_libraries(test_bloom_filter
     pthread
 )
 
-add_executable(test_trie
-    test_trie.cpp
+add_executable(test_prefix_tree
+    test_prefix_tree.cpp
 )
-target_link_libraries(test_trie
+target_link_libraries(test_prefix_tree
     cake
     gtest
     gtest_main

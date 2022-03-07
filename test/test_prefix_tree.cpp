@@ -1,33 +1,33 @@
 #include <gtest/gtest.h>
 
-#include <cake/Trie.h>
+#include <cake/PrefixTree.h>
 
-TEST(TrieTest, constructEmpty) {
-    cake::Trie trie;
+TEST(PrefixTreeTest, constructEmpty) {
+    cake::PrefixTree trie;
 
     ASSERT_EQ(trie.size(), 0);
 }
 
-TEST(TrieTest, constructWithWordContainer) {
+TEST(PrefixTreeTest, constructWithWordContainer) {
     std::vector<std::string> words = {"apple", "brave", "application", "cake", "cat"};
-    cake::Trie trie(words);
+    cake::PrefixTree trie(words);
 
     ASSERT_EQ(trie.size(), words.size());
 }
 
-TEST(TrieTest, addWord) {
-    cake::Trie trie;
+TEST(PrefixTreeTest, addWord) {
+    cake::PrefixTree trie;
 
     ASSERT_EQ(trie.size(), 0);
 
-    trie.addWord("cake");
+    trie.add("cake");
 
     ASSERT_EQ(trie.size(), 1);
 }
 
-TEST(TrieTest, query) {
+TEST(PrefixTreeTest, query) {
     std::vector<std::string> words = {"apple", "brave", "application", "cake", "cat"};
-    cake::Trie trie(words);
+    cake::PrefixTree trie(words);
 
     {
         const std::vector<std::string> expected = {"apple", "application"};
