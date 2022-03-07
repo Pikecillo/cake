@@ -1,10 +1,12 @@
+#include <string>
+
 #include <gtest/gtest.h>
 
 #include <cake/PrefixTree.h>
 
 TEST(PrefixTreeTest, constructEmpty)
 {
-    cake::PrefixTree trie;
+    cake::PrefixTree<std::string> trie;
 
     EXPECT_EQ(trie.size(), 0);
 }
@@ -13,14 +15,14 @@ TEST(PrefixTreeTest, constructWithWordContainer)
 {
     {
         std::vector<std::string> words = { "apple", "brave", "application", "cake", "cat" };
-        cake::PrefixTree trie(words);
+        cake::PrefixTree<std::string> trie(words);
 
         EXPECT_EQ(trie.size(), words.size());
     }
 
     {
         std::vector<std::string> words = { "apple", "apple", "brave", "application", "cake", "cat", "" };
-        cake::PrefixTree trie(words);
+        cake::PrefixTree<std::string> trie(words);
 
         ASSERT_EQ(trie.size(), 5);
     }
@@ -28,7 +30,7 @@ TEST(PrefixTreeTest, constructWithWordContainer)
 
 TEST(PrefixTreeTest, add)
 {
-    cake::PrefixTree trie;
+    cake::PrefixTree<std::string> trie;
 
     EXPECT_FALSE(trie.add(""));
     EXPECT_EQ(trie.size(), 0);
@@ -51,8 +53,8 @@ TEST(PrefixTreeTest, add)
 
 TEST(PrefixTreeTest, remove)
 {
-    std::vector<std::string> words = { "beat", "cup", "cupcakes", "cupcake", "dude", "duderino"};
-    cake::PrefixTree trie(words);
+    std::vector<std::string> words = { "beat", "cup", "cupcakes", "cupcake", "dude", "duderino" };
+    cake::PrefixTree<std::string> trie(words);
 
     EXPECT_FALSE(trie.remove(""));
     EXPECT_EQ(trie.size(), 6);
@@ -79,7 +81,7 @@ TEST(PrefixTreeTest, remove)
 TEST(PrefixTreeTest, query)
 {
     std::vector<std::string> words = { "apple", "brave", "application", "cake", "cat" };
-    cake::PrefixTree trie(words);
+    cake::PrefixTree<std::string> trie(words);
 
     {
         const std::vector<std::string> expected = { "apple", "application" };
