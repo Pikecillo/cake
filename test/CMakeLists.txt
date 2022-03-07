@@ -4,10 +4,10 @@ include_directories(${CAKE_HOME}/include)
 
 find_package(OpenSSL REQUIRED)
 
-add_executable(test
-    main.cpp
+add_executable(test_bloom_filter
+    test_bloom_filter.cpp
 )
-target_link_libraries(test
+target_link_libraries(test_bloom_filter
     cake
     gtest
     gtest_main
@@ -23,7 +23,3 @@ target_link_libraries(test_trie
     gtest_main
     pthread
 )
-
-include(GoogleTest)
-
-gtest_discover_tests(test)
