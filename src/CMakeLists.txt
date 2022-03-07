@@ -5,6 +5,7 @@ include_directories(${CAKE_HOME}/include)
 add_library(cake
     BloomFilter.cpp
     Hash.cpp
+    PrefixTree.cpp
 )
 
 target_link_libraries(cake

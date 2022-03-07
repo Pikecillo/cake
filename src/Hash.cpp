@@ -10,5 +10,5 @@ namespace Hash {
         MD5(reinterpret_cast<const unsigned char*>(data), size, result.data());
         return result;
     };
-}
-}
+} // namespace Hash
+} // namespace cake
