@@ -1,7 +1,7 @@
 #pragma once
 
-#include <array>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -11,9 +11,9 @@
 namespace cake {
 class BloomFilter {
 public:
-    BloomFilter(size_t expectedCount, double falsePositiveRate=0.01) : 
-        m_expectedCount(expectedCount),
-        m_falsePositiveRate(falsePositiveRate)
+    BloomFilter(size_t expectedCount, double falsePositiveRate = 0.01)
+        : m_expectedCount(expectedCount)
+        , m_falsePositiveRate(falsePositiveRate)
     {
         const double ln_2 = std::log(2.0);
         const double ln2_2 = ln_2 * ln_2;
