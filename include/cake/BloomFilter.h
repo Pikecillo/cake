@@ -61,4 +61,4 @@ private:
     size_t m_size, m_numHashes;
     std::vector<bool> m_bitArray;
 };
-}
+} // namespace cake

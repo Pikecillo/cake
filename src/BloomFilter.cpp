@@ -18,4 +18,4 @@ double BloomFilter::occupancy() const
 
     return occupancy / m_bitArray.size();
 }
-}
+} // namespace cake
