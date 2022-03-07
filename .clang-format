@@ -1,4 +1,6 @@
 ﻿---
-BasedOnStyle: WebKit
+BasedOnStyle: LLVM
+ColumnLimit: 100
 FixNamespaceComments: true
+IndentWidth: 4
 ...

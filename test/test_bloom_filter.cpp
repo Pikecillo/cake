@@ -2,16 +2,14 @@
 
 #include <cake/BloomFilter.h>
 
-TEST(BloomFilterTest, emptyFilter)
-{
+TEST(BloomFilterTest, emptyFilter) {
     cake::BloomFilter bloomFilter(10000, 0.05);
 
     ASSERT_FALSE(bloomFilter.contains(9.3));
     ASSERT_FALSE(bloomFilter.contains(9));
 }
 
-TEST(BloomFilterTest, add)
-{
+TEST(BloomFilterTest, add) {
     cake::BloomFilter bloomFilter(10000, 0.05);
 
     ASSERT_FALSE(bloomFilter.contains(7));
@@ -20,8 +18,7 @@ TEST(BloomFilterTest, add)
     ASSERT_FALSE(bloomFilter.contains(7.0));
 }
 
-TEST(BloomFilterTest, clear)
-{
+TEST(BloomFilterTest, clear) {
     cake::BloomFilter bloomFilter(10000, 0.05);
 
     bloomFilter.add(7);
@@ -42,8 +39,7 @@ TEST(BloomFilterTest, clear)
     ASSERT_FALSE(bloomFilter.contains(10));
 }
 
-int main(int argc, char** argv)
-{
+int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
