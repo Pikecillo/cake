@@ -16,8 +16,6 @@ template <typename TString> class PrefixTree {
 
     PrefixTree(const std::vector<string_type> &words);
 
-    ~PrefixTree();
-
     size_t size() const { return m_size; }
 
     bool add(const string_type &word);
@@ -70,8 +68,6 @@ PrefixTree<TString>::PrefixTree(const std::vector<string_type> &words)
         add(word);
     }
 }
-
-template <typename TString> PrefixTree<TString>::~PrefixTree() = default;
 
 template <typename TString> bool PrefixTree<TString>::add(const string_type &word) {
     if (word.empty())
