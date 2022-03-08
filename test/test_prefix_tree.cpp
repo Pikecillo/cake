@@ -59,6 +59,9 @@ TEST(PrefixTreeTest, remove) {
     EXPECT_FALSE(trie.remove("beta"));
     EXPECT_EQ(trie.size(), 6);
 
+    EXPECT_FALSE(trie.remove("beats"));
+    EXPECT_EQ(trie.size(), 6);
+
     EXPECT_TRUE(trie.remove("beat"));
     EXPECT_EQ(trie.size(), 5);
 
@@ -93,6 +96,11 @@ TEST(PrefixTreeTest, query) {
 
     {
         const auto actual = trie.query("");
+        EXPECT_TRUE(actual.empty());
+    }
+
+    {
+        const auto actual = trie.query("applications");
         EXPECT_TRUE(actual.empty());
     }
 }
