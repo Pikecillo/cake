@@ -1,6 +1,9 @@
 #pragma once
 
+#include <iostream>
+
 #include <limits>
+#include <optional>
 #include <unordered_map>
 #include <vector>
 
@@ -12,25 +15,22 @@ namespace cake {
  */
 template <typename TElement> class DisjointSet {
   public:
-    using SetId = size_t;
-
     using element_type = TElement;
 
-    static const size_t NoSet = std::numeric_limits<size_t>::max();
+    using SetHandle = size_t;
 
-  public:
-    SetId add(const element_type &element);
+    SetHandle add(const element_type &element);
 
-    SetId find(const element_type &element) const;
+    std::optional<SetHandle> find(const element_type &element) const;
 
     bool join(const element_type &element1, const element_type &element2);
 
-    bool join(SetId set1, SetId set2);
+    bool join(const SetHandle &handle1, const SetHandle &handle2);
 
   private:
-    std::vector<size_t> m_sizes;
-    std::vector<SetId> m_elements;
-    std::unordered_map<element_type, size_t> m_index;
+    std::vector<size_t> m_setSizes;
+    mutable std::vector<SetHandle> m_ownerSetHandles;
+    std::unordered_map<element_type, size_t> m_elementToIdx; /// Element to idx
 };
 
 /**
@@ -38,46 +38,47 @@ template <typename TElement> class DisjointSet {
  * is already present in any of the sets, no new set is created.
  *
  * @param element The element of the new set.
- * @return The id of the set containing the element.
+ * @return The handle of the set containing the element.
  */
 template <typename TElement>
-typename DisjointSet<TElement>::SetId DisjointSet<TElement>::add(const element_type &element) {
-    SetId id = find(element);
+typename DisjointSet<TElement>::SetHandle DisjointSet<TElement>::add(const element_type &element) {
+    const auto setHandle = find(element);
 
-    if (id)
-        while (id != m_elements[id]) {
-            m_elements[id] = m_elements[m_elements[id]];
-            id = m_elements[id];
-        }
+    if (setHandle)
+        return setHandle.value();
 
-    if (id != NoSet)
-        return id;
+    size_t idx = m_ownerSetHandles.size();
+    m_elementToIdx.insert({element, idx});
+    m_setSizes.push_back(1);
 
-    id = m_elements.size();
-    m_index.insert({element, id});
-    m_sizes.push_back(1);
-    m_elements.push_back(id);
+    SetHandle newSetHandle(idx);
+    m_ownerSetHandles.push_back(newSetHandle);
 
-    return id;
+    return newSetHandle;
 }
 
 /**
- * Finds the ownership a an element.  and path
- * halving
+ * Finds the ownership a an element.
  *
  * @param element The element.
  * @return If the element is present in some set, it is the id of such set,
  *         otherwise it is NoSet.
  */
 template <typename TElement>
-typename DisjointSet<TElement>::SetId
+std::optional<typename DisjointSet<TElement>::SetHandle>
 DisjointSet<TElement>::find(const element_type &element) const {
-    const auto it = m_index.find(element);
+    const auto it = m_elementToIdx.find(element);
 
-    if (it == m_index.end())
-        return NoSet;
+    if (it == m_elementToIdx.end())
+        return {};
 
-    return it->second;
+    size_t idx = it->second;
+    while (idx != m_ownerSetHandles[idx]) {
+        m_ownerSetHandles[idx] = m_ownerSetHandles[m_ownerSetHandles[idx]];
+        idx = m_ownerSetHandles[idx];
+    }
+
+    return idx;
 }
 
 /**
@@ -103,23 +104,24 @@ bool DisjointSet<TElement>::join(const element_type &element1, const element_typ
  * Merges two sets. The sets are identified by two distinct ids.
  * If the ids identify two distinct disjoint sets, then a merge operation
  * take place. Otherwise, no merge operation takes place.
- * The implementation is using the weighted union heuristic.
+ * The implementation is using the weighted union heuristic, and path halving
  *
  * @param element1 The first element.
  * @param element2. The second element.
  * @return true, if a merged operation took place; false, otherwise.
  */
-template <typename TElement> bool DisjointSet<TElement>::join(SetId set1, SetId set2) {
-    if (set1 == NoSet || set2 == NoSet || set1 == set2 || set1 > m_elements.size() ||
-        set2 > m_elements.size() || m_sizes[set1] == 0 || m_sizes[set2] == 0)
+template <typename TElement>
+bool DisjointSet<TElement>::join(const SetHandle &handle1, const SetHandle &handle2) {
+    if (handle1 == handle2 || handle1 >= m_ownerSetHandles.size() ||
+        handle2 >= m_ownerSetHandles.size() || m_setSizes[handle1] == 0 || m_setSizes[handle2] == 0)
         return false;
 
-    const SetId smallSet = m_sizes[set1] < m_sizes[set2] ? set1 : set2;
-    const SetId largeSet = smallSet == set1 ? set2 : set1;
+    const auto smallHandle = (m_setSizes[handle1] < m_setSizes[handle2] ? handle1 : handle2);
+    const auto largeHandle = (smallHandle == handle1 ? handle2 : handle1);
 
-    m_elements[smallSet] = largeSet;
-    m_sizes[largeSet] += m_sizes[smallSet];
-    m_sizes[smallSet] = 0;
+    m_ownerSetHandles[smallHandle] = largeHandle;
+    m_setSizes[largeHandle] += m_setSizes[smallHandle];
+    m_setSizes[smallHandle] = 0;
 
     return true;
 }
