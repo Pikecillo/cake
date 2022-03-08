@@ -7,6 +7,10 @@
 
 namespace cake {
 
+/**
+ * Prefix Tree data structure. Allows for quick retrieval of
+ * all words that match a given prefix among a given set of words.
+ */
 template <typename TString> class PrefixTree {
   public:
     using string_type = TString;
@@ -58,9 +62,17 @@ template <typename TString> struct PrefixTree<TString>::Node {
     }
 };
 
+/**
+ * Constructor. Creates an empty prefix tree.
+ */
 template <typename TString>
 PrefixTree<TString>::PrefixTree() : m_root(std::make_unique<Node>()), m_size(0) {}
 
+/**
+ * Constructor. Creates a prefix tree with all the words in a given vector.
+ * 
+ * @param words Container of words.
+ */
 template <typename TString>
 PrefixTree<TString>::PrefixTree(const std::vector<string_type> &words)
     : m_root(std::make_unique<Node>()), m_size(0) {
@@ -69,6 +81,13 @@ PrefixTree<TString>::PrefixTree(const std::vector<string_type> &words)
     }
 }
 
+/**
+ * Add a new word to the prefix tree, if the word was not already present.
+ * 
+ * @param word Given word.
+ * 
+ * @return true if the new word is not empty and was not already present, otherwise false.
+ */
 template <typename TString> bool PrefixTree<TString>::add(const string_type &word) {
     if (word.empty())
         return false;
@@ -95,6 +114,13 @@ template <typename TString> bool PrefixTree<TString>::add(const string_type &wor
     return true;
 }
 
+/**
+ * Remove a word from the prefix tree.
+ * 
+ * @param word Given word.
+ * 
+ * @return true if the word was removed, otherwise false.
+ */
 template <typename TString> bool PrefixTree<TString>::remove(const string_type &word) {
     if (word.empty())
         return false;
@@ -135,6 +161,13 @@ template <typename TString> bool PrefixTree<TString>::remove(const string_type &
     return true;
 }
 
+/**
+ * Query prefix tree for all words that match a given prefix.
+ * 
+ * @param prefix A given prefix.
+ * 
+ * @return A vector with all the words in the prefix tree that match the given prefix.
+ */
 template <typename TString>
 std::vector<TString> PrefixTree<TString>::query(const string_type &prefix) const {
     if (prefix.empty())
