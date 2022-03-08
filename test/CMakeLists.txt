@@ -14,6 +14,16 @@ target_link_libraries(test_bloom_filter
     pthread
 )
 
+add_executable(test_disjoint_set
+    test_disjoint_set.cpp
+)
+target_link_libraries(test_disjoint_set
+    cake
+    gtest
+    gtest_main
+    pthread
+)
+
 add_executable(test_prefix_tree
     test_prefix_tree.cpp
 )
