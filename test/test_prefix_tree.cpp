@@ -17,7 +17,6 @@ TEST(PrefixTreeTest, constructWithWordContainer) {
 
         EXPECT_EQ(trie.size(), words.size());
     }
-
     {
         std::vector<std::string> words = {"apple", "apple", "brave", "application",
                                           "cake",  "cat",   ""};
@@ -93,15 +92,18 @@ TEST(PrefixTreeTest, query) {
         EXPECT_EQ(expected[0], actual[0]);
         EXPECT_EQ(expected[1], actual[1]);
     }
-
     {
         const auto actual = trie.query("");
         EXPECT_TRUE(actual.empty());
     }
-
     {
         const auto actual = trie.query("applications");
         EXPECT_TRUE(actual.empty());
+    }
+    {
+        const auto actual = trie.query("brave");
+        ASSERT_EQ(actual.size(), 1);
+        EXPECT_EQ(actual[0], "brave");
     }
 }
 
