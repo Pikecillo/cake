@@ -57,6 +57,14 @@ class BloomFilter {
     double occupancy() const;
 
   private:
+    /**
+     * Computes the bit index, for the given data
+     *
+     * @param data An array of bytes. This is an MD5 has with an additional byte concatenated.
+     * The additional byte represent the id of the hash operation.
+     *
+     * @return The bit index.
+     */
     template <size_t Size> size_t computeIdx(const std::array<unsigned char, Size> &data) const;
 
   private:
