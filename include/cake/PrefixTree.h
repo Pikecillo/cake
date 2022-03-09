@@ -16,16 +16,49 @@ template <typename TString> class PrefixTree {
     using string_type = TString;
     using symbol_type = typename TString::value_type;
 
+    /**
+     * Constructor. Creates an empty prefix tree.
+     */
     PrefixTree();
 
+    /**
+     * Constructor. Creates a prefix tree with all the words in a given vector.
+     *
+     * @param words Container of words.
+     */
     PrefixTree(const std::vector<string_type> &words);
 
+    /** Returns how many words the prefix tree contains.
+     *
+     * @return The number of words in the prefix tree.
+     */
     size_t size() const { return m_size; }
 
+    /**
+     * Add a new word to the prefix tree, if the word was not already present.
+     *
+     * @param word Given word.
+     *
+     * @return true if the new word is not empty and was not already present, otherwise false.
+     */
     bool add(const string_type &word);
 
+    /**
+     * Remove a word from the prefix tree.
+     *
+     * @param word Given word.
+     *
+     * @return true if the word was removed, otherwise false.
+     */
     bool remove(const string_type &word);
 
+    /**
+     * Query prefix tree for all words that match a given prefix.
+     *
+     * @param prefix A given prefix.
+     *
+     * @return A vector with all the words in the prefix tree that match the given prefix.
+     */
     std::vector<string_type> query(const string_type &prefix) const;
 
   private:
@@ -62,17 +95,9 @@ template <typename TString> struct PrefixTree<TString>::Node {
     }
 };
 
-/**
- * Constructor. Creates an empty prefix tree.
- */
 template <typename TString>
 PrefixTree<TString>::PrefixTree() : m_root(std::make_unique<Node>()), m_size(0) {}
 
-/**
- * Constructor. Creates a prefix tree with all the words in a given vector.
- *
- * @param words Container of words.
- */
 template <typename TString>
 PrefixTree<TString>::PrefixTree(const std::vector<string_type> &words)
     : m_root(std::make_unique<Node>()), m_size(0) {
@@ -81,13 +106,6 @@ PrefixTree<TString>::PrefixTree(const std::vector<string_type> &words)
     }
 }
 
-/**
- * Add a new word to the prefix tree, if the word was not already present.
- *
- * @param word Given word.
- *
- * @return true if the new word is not empty and was not already present, otherwise false.
- */
 template <typename TString> bool PrefixTree<TString>::add(const string_type &word) {
     if (word.empty())
         return false;
@@ -112,13 +130,6 @@ template <typename TString> bool PrefixTree<TString>::add(const string_type &wor
     return true;
 }
 
-/**
- * Remove a word from the prefix tree.
- *
- * @param word Given word.
- *
- * @return true if the word was removed, otherwise false.
- */
 template <typename TString> bool PrefixTree<TString>::remove(const string_type &word) {
     if (word.empty())
         return false;
@@ -159,13 +170,6 @@ template <typename TString> bool PrefixTree<TString>::remove(const string_type &
     return true;
 }
 
-/**
- * Query prefix tree for all words that match a given prefix.
- *
- * @param prefix A given prefix.
- *
- * @return A vector with all the words in the prefix tree that match the given prefix.
- */
 template <typename TString>
 std::vector<TString> PrefixTree<TString>::query(const string_type &prefix) const {
     if (prefix.empty())
