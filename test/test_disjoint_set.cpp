@@ -1,5 +1,3 @@
-#include <string>
-
 #include <gtest/gtest.h>
 
 #include <cake/DisjointSet.h>
@@ -49,6 +47,7 @@ TEST(DisjointSetTest, join) {
 
     EXPECT_TRUE(disjointSet.join(3, 4));
     EXPECT_FALSE(disjointSet.join(3, 4));
+    EXPECT_FALSE(disjointSet.join(id3, id4));
 
     const auto actualId1 = disjointSet.find(-1);
     const auto actualId2 = disjointSet.find(4);

@@ -97,10 +97,8 @@ template <typename TString> bool PrefixTree<TString>::add(const string_type &wor
     for (const symbol_type symbol : word) {
         const auto it = node->children.find(symbol);
 
-        if (it == node->children.end()) {
-            Node *newNode = new Node();
+        if (it == node->children.end())
             node->children[symbol] = std::make_unique<Node>();
-        }
 
         node = node->children[symbol].get();
     }

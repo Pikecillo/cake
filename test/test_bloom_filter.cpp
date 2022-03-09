@@ -3,19 +3,18 @@
 #include <cake/BloomFilter.h>
 
 TEST(BloomFilterTest, emptyFilter) {
-    cake::BloomFilter bloomFilter(10000, 0.05);
+    cake::BloomFilter bloomFilter(10000, 0.01);
 
     ASSERT_FALSE(bloomFilter.contains(9.3));
     ASSERT_FALSE(bloomFilter.contains(9));
 }
 
 TEST(BloomFilterTest, add) {
-    cake::BloomFilter bloomFilter(10000, 0.05);
+    cake::BloomFilter bloomFilter(200, 0.05);
 
     ASSERT_FALSE(bloomFilter.contains(7));
     bloomFilter.add(7);
     ASSERT_TRUE(bloomFilter.contains(7));
-    ASSERT_FALSE(bloomFilter.contains(7.0));
 }
 
 TEST(BloomFilterTest, clear) {
@@ -37,6 +36,30 @@ TEST(BloomFilterTest, clear) {
     ASSERT_FALSE(bloomFilter.contains("eight"));
     ASSERT_FALSE(bloomFilter.contains(9));
     ASSERT_FALSE(bloomFilter.contains(10));
+}
+
+TEST(BloomFilterTest, falsePositiveRate) {
+    double tolerance = 1.1; // Deviation of 10% allowed
+    double falsePositiveRate = 0.01;
+
+    {
+        const int numElements = 20000000;
+        cake::BloomFilter bloomFilter(numElements, falsePositiveRate);
+        int falsePositives = 0, totalAttempts = 0;
+
+        for (int i = 0; i < numElements; i++) {
+            if (!bloomFilter.contains(i)) {
+                bloomFilter.add(i);
+            } else {
+                falsePositives++;
+            }
+
+            totalAttempts++;
+        }
+
+        EXPECT_LT(static_cast<double>(falsePositives) / totalAttempts,
+                  tolerance * falsePositiveRate);
+    }
 }
 
 int main(int argc, char **argv) {
