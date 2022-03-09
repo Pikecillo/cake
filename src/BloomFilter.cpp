@@ -1,18 +1,23 @@
 #include <cake/BloomFilter.h>
 
+#include <cmath>
+
 namespace cake {
+
+namespace {
+const size_t maxNumBits = (static_cast<size_t>(1) << 35); // Around 4GB
+const size_t maxNumHashes = 256;
+} // namespace
 
 BloomFilter::BloomFilter(size_t expectedCount, double falsePositiveRate = 0.01)
     : m_expectedCount(expectedCount), m_falsePositiveRate(falsePositiveRate) {
     const double ln_2 = std::log(2.0);
     const double ln2_2 = ln_2 * ln_2;
-    const size_t size = -static_cast<int>(expectedCount) * log(falsePositiveRate) / ln2_2;
-    const size_t numHashes = static_cast<size_t>(size / expectedCount * ln_2);
-    const size_t maxSize = (1 << 20);
-    const size_t maxNumHashes = 8;
+    const size_t numBits = -static_cast<long long>(expectedCount) * log(falsePositiveRate) / ln2_2;
+    const size_t numHashes = (numBits / expectedCount) * ln_2;
 
-    m_numHashes = std::max(numHashes, maxNumHashes);
-    m_bitArray = std::vector<bool>(std::min(size, maxSize), false);
+    m_numHashes = std::min(numHashes, maxNumHashes);
+    m_bitArray = std::vector<bool>(std::min(numBits, maxNumBits), false);
 }
 
 void BloomFilter::clear() {
@@ -24,7 +29,7 @@ double BloomFilter::occupancy() const {
     double occupancy = 0.0;
 
     for (const auto bit : m_bitArray) {
-        occupancy += bit;
+        occupancy += bit ? 1.0 : 0.0;
     }
 
     return occupancy / m_bitArray.size();
