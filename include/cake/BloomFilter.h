@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <array>
 #include <cstring>
-#include <iostream>
 #include <vector>
 
 #include <cake/Hash.h>
@@ -13,8 +12,8 @@ namespace cake {
 /**
  * Bloom Filter data structure. The Bloom Filter allows for approximate testing
  * of membership to a set, allowing for a certain rate of false positives to occur.
- * That is, the membership test to the set through the bloom filter may return
- * "true", meaning "possibly in set", and "false" meaning "not in set".
+ * That is, the membership test through the bloom filter may return "true", meaning "possibly in
+ * set", and "false" meaning "not in set".
  */
 class BloomFilter {
   public:
@@ -26,9 +25,23 @@ class BloomFilter {
      */
     BloomFilter(size_t expectedCount, double falsePositiveRate);
 
-    template <typename Type> bool contains(const Type &element) const;
+    /**
+     * Test an element for membership into the underlying set. The test allows for a
+     * certain rate of false positives to occur.
+     *
+     * @param element The given element.
+     *
+     * @return true, when the element is possibly in the set; false, when the element is
+     * guaranteed not to be in the set.
+     */
+    template <typename TElement> bool contains(const TElement &element) const;
 
-    template <typename Type> void add(const Type &element);
+    /**
+     * Add a new element to the underlying set.
+     *
+     * @param The element to be added.
+     */
+    template <typename TElement> void add(const TElement &element);
 
     /**
      * Clears the underlying set
@@ -44,35 +57,37 @@ class BloomFilter {
     double occupancy() const;
 
   private:
+    template <size_t Size> size_t computeIdx(const std::array<unsigned char, Size> &data) const;
+
+  private:
     size_t m_expectedCount;
     double m_falsePositiveRate;
     size_t m_size, m_numHashes;
     std::vector<bool> m_bitArray;
 };
 
-/**
- * Test an element for membership into the underlying set. The test allows for a
- * certain rate of false positives to occur.
- *
- * @param element The given element.
- *
- * @return true, when the element is possibly in the set; false, when the element is
- * guaranteed not to be in the set.
- */
+template <size_t Size>
+size_t BloomFilter::computeIdx(const std::array<unsigned char, Size> &data) const {
+    const auto hash_result = Hash::md5(data.data(), data.size());
+
+    size_t idx = 0;
+    for (size_t j = 0; j < sizeof(size_t); ++j) {
+        idx = ((idx << 8) | hash_result[j]);
+    }
+
+    idx = idx % m_bitArray.size();
+
+    return idx;
+}
+
 template <typename TElement> bool BloomFilter::contains(const TElement &element) const {
     std::array<unsigned char, sizeof(TElement) + 1> data;
     std::memcpy(data.data() + 1, &element, sizeof(TElement));
 
     for (size_t i = 1; i <= m_numHashes; ++i) {
         data[0] = static_cast<unsigned char>(i);
-        const auto hash_result = Hash::md5(data.data(), data.size());
 
-        size_t idx = 0;
-        for (size_t j = 0; j < sizeof(size_t); ++j) {
-            idx = ((idx << 8) | hash_result[j]);
-        }
-
-        idx = idx % m_bitArray.size();
+        const size_t idx = computeIdx(data);
 
         if (!m_bitArray[idx])
             return false;
@@ -81,25 +96,15 @@ template <typename TElement> bool BloomFilter::contains(const TElement &element)
     return true;
 }
 
-/**
- * Add a new element to the underlying set.
- *
- * @param The element to be added.
- */
 template <typename TElement> void BloomFilter::add(const TElement &element) {
     std::array<unsigned char, sizeof(TElement) + 1> data;
     std::memcpy(data.data() + 1, &element, sizeof(TElement));
 
     for (size_t i = 1; i <= m_numHashes; ++i) {
         data[0] = static_cast<unsigned char>(i);
-        const auto hash_result = Hash::md5(data.data(), data.size());
 
-        size_t idx = 0;
-        for (size_t j = 0; j < sizeof(size_t); ++j) {
-            idx = ((idx << 8) | hash_result[j]);
-        }
+        const size_t idx = computeIdx(data);
 
-        idx = idx % m_bitArray.size();
         m_bitArray[idx] = true;
     }
 }
