@@ -19,12 +19,47 @@ template <typename TElement> class DisjointSet {
 
     using SetHandle = size_t;
 
+    /**
+     * Creates a new disjoint set with a single element. If the element
+     * is already present in any of the sets, no new set is created.
+     *
+     * @param element The element of the new set.
+     * @return The handle of the set containing the element.
+     */
     SetHandle add(const element_type &element);
 
+    /**
+     * Finds the ownership a an element.
+     *
+     * @param element The element.
+     * @return If the element is present in some set, it is the id of such set,
+     *         otherwise it is NoSet.
+     */
     std::optional<SetHandle> find(const element_type &element) const;
 
+    /**
+     * Merges two sets. The sets are identified by two distinct elements.
+     * If the to elements belong to different sets, those sets are merged.
+     * Otherwise no merge operation takes place.
+     * If any of the elements belongs to no set yet, the element is added
+     * to a newly created set.
+     *
+     * @param element1 The first element.
+     * @param element2. The second element.
+     * @return true, if a merged operation took place; false, otherwise.
+     */
     bool join(const element_type &element1, const element_type &element2);
 
+    /**
+     * Merges two sets. The sets are identified by two distinct ids.
+     * If the ids identify two distinct disjoint sets, then a merge operation
+     * take place. Otherwise, no merge operation takes place.
+     * The implementation is using the weighted union heuristic, and path halving
+     *
+     * @param element1 The first element.
+     * @param element2. The second element.
+     * @return true, if a merged operation took place; false, otherwise.
+     */
     bool join(const SetHandle &handle1, const SetHandle &handle2);
 
   private:
@@ -33,13 +68,6 @@ template <typename TElement> class DisjointSet {
     std::unordered_map<element_type, size_t> m_elementToIdx; /// Element to idx
 };
 
-/**
- * Creates a new disjoint set with a single element. If the element
- * is already present in any of the sets, no new set is created.
- *
- * @param element The element of the new set.
- * @return The handle of the set containing the element.
- */
 template <typename TElement>
 typename DisjointSet<TElement>::SetHandle DisjointSet<TElement>::add(const element_type &element) {
     const auto setHandle = find(element);
@@ -57,13 +85,6 @@ typename DisjointSet<TElement>::SetHandle DisjointSet<TElement>::add(const eleme
     return newSetHandle;
 }
 
-/**
- * Finds the ownership a an element.
- *
- * @param element The element.
- * @return If the element is present in some set, it is the id of such set,
- *         otherwise it is NoSet.
- */
 template <typename TElement>
 std::optional<typename DisjointSet<TElement>::SetHandle>
 DisjointSet<TElement>::find(const element_type &element) const {
@@ -81,35 +102,14 @@ DisjointSet<TElement>::find(const element_type &element) const {
     return idx;
 }
 
-/**
- * Merges two sets. The sets are identified by two distinct elements.
- * If the to elements belong to different sets, those sets are merged.
- * Otherwise no merge operation takes place.
- * If any of the elements belongs to no set yet, the element is added
- * to a newly created set.
- *
- * @param element1 The first element.
- * @param element2. The second element.
- * @return true, if a merged operation took place; false, otherwise.
- */
 template <typename TElement>
 bool DisjointSet<TElement>::join(const element_type &element1, const element_type &element2) {
-    const auto set1 = add(element1);
-    const auto set2 = add(element2);
+    const auto handle1 = add(element1);
+    const auto handle2 = add(element2);
 
-    return join(set1, set2);
+    return join(handle1, handle2);
 }
 
-/**
- * Merges two sets. The sets are identified by two distinct ids.
- * If the ids identify two distinct disjoint sets, then a merge operation
- * take place. Otherwise, no merge operation takes place.
- * The implementation is using the weighted union heuristic, and path halving
- *
- * @param element1 The first element.
- * @param element2. The second element.
- * @return true, if a merged operation took place; false, otherwise.
- */
 template <typename TElement>
 bool DisjointSet<TElement>::join(const SetHandle &handle1, const SetHandle &handle2) {
     if (handle1 == handle2 || handle1 >= m_ownerSetHandles.size() ||
