@@ -55,6 +55,9 @@ TEST(DisjointSetTest, join) {
     ASSERT_TRUE(actualId1.has_value());
     ASSERT_TRUE(actualId2.has_value());
     EXPECT_EQ(actualId1.value(), actualId2.value());
+
+    EXPECT_TRUE(disjointSet.join(id2, id3));
+    EXPECT_FALSE(disjointSet.join(id2, id4));
 }
 
 int main(int argc, char **argv) {
