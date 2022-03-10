@@ -20,10 +20,22 @@ class BloomFilter {
     /**
      * Constructor.
      *
-     * @param expectedCount Number of expected elements to be added to the set.
-     * @param falsePositiveRate Desired false positive rate.
+     * @param expectedCount Number of expected elements to be added to the set. The value is not allower
+     * to be 0 (a value of 0 will be converted to 1).
+     * @param falsePositiveRate Desired false positive rate. Values are clamped to the interval
+     * [0.0005, 0.5]
      */
     BloomFilter(size_t expectedCount, double falsePositiveRate);
+
+    /**
+     * Returns the given expected number of elements to be added as specified in constructor parameter.
+     */
+    size_t expectedCount() const { return m_expectedCount; }
+
+    /**
+     * Returns the desired false positive rate as specified in constructor parameter.
+     */
+    double falsePositiveRate() const { return m_falsePositiveRate; };
 
     /**
      * Test an element for membership into the underlying set. The test allows for a
