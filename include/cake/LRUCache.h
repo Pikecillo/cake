@@ -21,23 +21,23 @@ template <class TKey, class TValue> class LRUCache {
     using KeyValuePair = std::pair<key_type, value_type>;
 
   public:
-  /**
-   * Constructor. If given maximum size is zero, an exception is thrown.
-   * 
-   * @param maxSize Maximum size allowed. 
-   */
+    /**
+     * Constructor. If given maximum size is zero, an exception is thrown.
+     *
+     * @param maxSize Maximum size allowed.
+     */
     explicit LRUCache(size_t maxSize);
 
     /**
      * Returns the maximum number of entries allowed in the cache.
-     * 
-     * @return Maxium size allowed.
+     *
+     * @return Maximum size allowed.
      */
     size_t maxSize() const { return m_maxSize; }
 
     /**
      * Returns the number of entries currently in the cache.
-     * 
+     *
      * @return Current size.
      */
     size_t size() const { return m_size; }
@@ -46,22 +46,55 @@ template <class TKey, class TValue> class LRUCache {
      * Returns a reference to the entry with the given key. This operations touches
      * the entry, so it makes it the most recently used entry.
      * If the entry does not exist, one is created.
-     * 
+     *
      * @param key The given key,
-     * 
+     *
      * @return A reference to the associated value.
      */
     value_type &operator[](const key_type &key);
 
+    /**
+     * Insert a new entry into the cache. This operations touches
+     * the entry, so it makes it the most recently used entry.
+     *
+     * @param key The given key
+     * @param value The given value
+     */
     void insert(const key_type &key, const value_type &value);
 
+    /**
+     * Checks if there is an entry with the given key. This operations touches
+     * the entry, so it makes it the most recently used entry.
+     *
+     * @param key The given key
+     *
+     * @return true if there is an entry in the cache with the given key,
+     * false otherwise.
+     */
     bool contains(const key_type &key);
 
+    /**
+     * Checks if there is an entry with the given key.
+     *
+     * @param key The given key
+     *
+     * @return true if an entry was removed from the cache,
+     * false otherwise.
+     */
     bool remove(const key_type &key);
 
   private:
+    /**
+     * Updates the cache such that the entry to which a given iterator becomes
+     * the most recently used entry.
+     * 
+     * @param it A given iterator. 
+     */
     void touchEntry(typename std::list<KeyValuePair>::iterator &it);
 
+    /**
+     * Evicts the least recently used entry from the cache.
+     */
     void evictLRUEntry();
 
   private:
