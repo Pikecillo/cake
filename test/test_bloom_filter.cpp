@@ -43,7 +43,7 @@ TEST(BloomFilterTest, falsePositiveRate) {
     double falsePositiveRate = 0.01;
 
     {
-        const int numElements = 20000000;
+        const int numElements = 10000000;
         cake::BloomFilter bloomFilter(numElements, falsePositiveRate);
         int falsePositives = 0, totalAttempts = 0;
 
