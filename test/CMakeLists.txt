@@ -24,6 +24,16 @@ target_link_libraries(test_disjoint_set
     pthread
 )
 
+add_executable(test_lru_cache
+    test_lru_cache.cpp
+)
+target_link_libraries(test_lru_cache
+    cake
+    gtest
+    gtest_main
+    pthread
+)
+
 add_executable(test_prefix_tree
     test_prefix_tree.cpp
 )
