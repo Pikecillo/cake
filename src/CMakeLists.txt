@@ -6,6 +6,7 @@ add_library(cake
     BloomFilter.cpp
     DisjointSet.cpp
     Hash.cpp
+    LRUCache.cpp
     PrefixTree.cpp
 )
 
