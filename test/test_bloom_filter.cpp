@@ -62,11 +62,10 @@ TEST(BloomFilterTest, clear) {
 }
 
 TEST(BloomFilterTest, falsePositiveRate) {
-    double tolerance = 1.1; // Deviation of 10% allowed
     double falsePositiveRate = 0.01;
 
     {
-        const int numElements = 10000000;
+        const int numElements = 100000000;
         cake::BloomFilter bloomFilter(numElements, falsePositiveRate);
         int falsePositives = 0, totalAttempts = 0;
 
@@ -80,8 +79,7 @@ TEST(BloomFilterTest, falsePositiveRate) {
             totalAttempts++;
         }
 
-        EXPECT_LT(static_cast<double>(falsePositives) / totalAttempts,
-                  tolerance * falsePositiveRate);
+        EXPECT_LT(static_cast<double>(falsePositives) / totalAttempts, falsePositiveRate);
     }
 }
 

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <algorithm>
-#include <array>
-#include <cstring>
 #include <vector>
 
 #include <cake/Hash.h>
@@ -20,15 +17,16 @@ class BloomFilter {
     /**
      * Constructor.
      *
-     * @param expectedCount Number of expected elements to be added to the set. The value is not allower
-     * to be 0 (a value of 0 will be converted to 1).
+     * @param expectedCount Number of expected elements to be added to the set. The value is not
+     * allowed to be 0 (a value of 0 will be converted to 1).
      * @param falsePositiveRate Desired false positive rate. Values are clamped to the interval
      * [0.0005, 0.5]
      */
     BloomFilter(size_t expectedCount, double falsePositiveRate);
 
     /**
-     * Returns the given expected number of elements to be added as specified in constructor parameter.
+     * Returns the given expected number of elements to be added as specified in constructor
+     * parameter.
      */
     size_t expectedCount() const { return m_expectedCount; }
 
@@ -68,47 +66,47 @@ class BloomFilter {
      */
     double occupancy() const;
 
+    /**
+     * Return the size of the filter
+     *
+     * @return Size of the filter
+     */
+    size_t size() const { return m_bitArray.size(); }
+
   private:
     /**
-     * Computes the bit index, for the given data
+     * Given an object, computes its indices in the bitmap.
      *
-     * @param data An array of bytes. This is an MD5 has with an additional byte concatenated.
-     * The additional byte represent the id of the hash operation.
+     * @param element The given element.
      *
-     * @return The bit index.
+     * @return The indices of the element.
      */
-    template <size_t Size> size_t computeIdx(const std::array<unsigned char, Size> &data) const;
+    template <typename TElement>
+    std::vector<size_t> computeElementIndices(const TElement &element) const;
 
   private:
     size_t m_expectedCount;
     double m_falsePositiveRate;
-    size_t m_size, m_numHashes;
+    size_t m_numHashes;
     std::vector<bool> m_bitArray;
 };
 
-template <size_t Size>
-size_t BloomFilter::computeIdx(const std::array<unsigned char, Size> &data) const {
-    const auto hash_result = Hash::md5(data.data(), data.size());
+template <typename TElement>
+std::vector<size_t> BloomFilter::computeElementIndices(const TElement &element) const {
+    std::vector<size_t> idxs;
 
-    size_t idx = 0;
-    for (size_t j = 0; j < sizeof(size_t); ++j) {
-        idx = ((idx << 8) | hash_result[j]);
+    for (size_t i = 1; i <= m_numHashes; ++i) {
+        const size_t idx = Hash::murmur64A(element, m_bitArray.size() * i) % m_bitArray.size();
+        idxs.push_back(idx);
     }
 
-    idx = idx % m_bitArray.size();
-
-    return idx;
+    return idxs;
 }
 
 template <typename TElement> bool BloomFilter::contains(const TElement &element) const {
-    std::array<unsigned char, sizeof(TElement) + 1> data;
-    std::memcpy(data.data() + 1, &element, sizeof(TElement));
+    const auto indices = computeElementIndices(element);
 
-    for (size_t i = 1; i <= m_numHashes; ++i) {
-        data[0] = static_cast<unsigned char>(i);
-
-        const size_t idx = computeIdx(data);
-
+    for (const auto idx : indices) {
         if (!m_bitArray[idx])
             return false;
     }
@@ -117,14 +115,9 @@ template <typename TElement> bool BloomFilter::contains(const TElement &element)
 }
 
 template <typename TElement> void BloomFilter::add(const TElement &element) {
-    std::array<unsigned char, sizeof(TElement) + 1> data;
-    std::memcpy(data.data() + 1, &element, sizeof(TElement));
+    const auto indices = computeElementIndices(element);
 
-    for (size_t i = 1; i <= m_numHashes; ++i) {
-        data[0] = static_cast<unsigned char>(i);
-
-        const size_t idx = computeIdx(data);
-
+    for (const auto idx : indices) {
         m_bitArray[idx] = true;
     }
 }
