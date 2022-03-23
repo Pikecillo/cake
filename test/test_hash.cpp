@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <cake/Hash.h>
-#include <iostream>
+
 TEST(HashTest, alwaysSameResult) {
     {
         const int64_t value1 = 9;
@@ -25,12 +25,6 @@ TEST(HashTest, alwaysSameResult) {
 
         const auto hash1 = cake::Hash::murmur64A(value1, 2022);
         const auto hash2 = cake::Hash::murmur64A(value2, 2022);
-
-        EXPECT_EQ(hash1, hash2);
-    }
-    {
-        const auto hash1 = cake::Hash::murmur64A("PieceOfCake", 2022);
-        const auto hash2 = cake::Hash::murmur64A("PieceOfCake", 2022);
 
         EXPECT_EQ(hash1, hash2);
     }
