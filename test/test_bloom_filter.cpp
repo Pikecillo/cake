@@ -42,21 +42,22 @@ TEST(BloomFilterTest, add) {
 
 TEST(BloomFilterTest, clear) {
     cake::BloomFilter bloomFilter(10000, 0.05);
+    std::string eight = "eight";
 
     bloomFilter.add(7);
-    bloomFilter.add("eight");
+    bloomFilter.add(eight);
     bloomFilter.add(9);
     bloomFilter.add(10);
 
     EXPECT_TRUE(bloomFilter.contains(7));
-    EXPECT_TRUE(bloomFilter.contains("eight"));
+    EXPECT_TRUE(bloomFilter.contains(eight));
     EXPECT_TRUE(bloomFilter.contains(9));
     EXPECT_TRUE(bloomFilter.contains(10));
 
     bloomFilter.clear();
 
     EXPECT_FALSE(bloomFilter.contains(7));
-    EXPECT_FALSE(bloomFilter.contains("eight"));
+    EXPECT_FALSE(bloomFilter.contains(eight));
     EXPECT_FALSE(bloomFilter.contains(9));
     EXPECT_FALSE(bloomFilter.contains(10));
 }
