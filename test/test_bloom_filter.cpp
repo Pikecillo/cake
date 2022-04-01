@@ -1,3 +1,27 @@
+/**
+ * MIT License
+ * 
+ * Copyright (c) 2022 Mario Rincon Nigro
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include <gtest/gtest.h>
 
 #include <cake/BloomFilter.h>
@@ -5,22 +29,22 @@
 TEST(BloomFilterTest, testConstructor) {
     {
         cake::BloomFilter bloomFilter(0, 0.00049);
-        EXPECT_EQ(1, bloomFilter.expectedCount());
+        EXPECT_EQ(1, bloomFilter.expectedNumElements());
         EXPECT_EQ(0.0005, bloomFilter.falsePositiveRate());
     }
     {
         cake::BloomFilter bloomFilter(10, 0.00051);
-        EXPECT_EQ(10, bloomFilter.expectedCount());
+        EXPECT_EQ(10, bloomFilter.expectedNumElements());
         EXPECT_EQ(0.00051, bloomFilter.falsePositiveRate());
     }
     {
         cake::BloomFilter bloomFilter(10, 0.500001);
-        EXPECT_EQ(10, bloomFilter.expectedCount());
+        EXPECT_EQ(10, bloomFilter.expectedNumElements());
         EXPECT_EQ(0.5, bloomFilter.falsePositiveRate());
     }
     {
         cake::BloomFilter bloomFilter(10, 0.499999);
-        EXPECT_EQ(10, bloomFilter.expectedCount());
+        EXPECT_EQ(10, bloomFilter.expectedNumElements());
         EXPECT_EQ(0.499999, bloomFilter.falsePositiveRate());
     }
 }
